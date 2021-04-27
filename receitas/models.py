@@ -10,8 +10,10 @@ class Receita(models.Model):
     rendimento = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
     date_receita = models.DateTimeField(default=datetime.now(), blank=True)
+    foto_receita = models.ImageField(upload_to='fotos/%d/%m/%Y', blank=True)
     pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
     publicada = models.BooleanField(default=False)
+
 
     class Meta:
         db_table = 'alura_receitas'
