@@ -5,3 +5,5 @@ urlpatterns = [
     path('', include('receitas.api.urls')),
     path('admin/', admin.site.urls),
 ]
+
+
