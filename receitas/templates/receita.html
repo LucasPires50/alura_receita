@@ -16,8 +16,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <form action="#" method="post">
-                        <input type="search" name="search" placeholder="O que está procurando...">
+                    <form action="{% url 'buscar' %}">
+                        <input type="search" name="buscar" placeholder="O que está procurando...">
                         <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                     </form>
                 </div>
@@ -27,7 +27,7 @@
 
 {% include 'partials/menu.html'%}
 
-        <!-- Receipe Post Search -->
+        {% comment %} <!-- Receipe Post Search -->
         <div class="receipe-post-search mb-80">
             <div class="container">
                 <form action="#" method="post">
@@ -45,7 +45,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- Receipe Slider -->
         <div class="container">

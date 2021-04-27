@@ -13,7 +13,8 @@ class Receita(models.Model):
     foto_receita = models.ImageField(upload_to='fotos/%d/%m/%Y', blank=True)
     pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
     publicada = models.BooleanField(default=False)
-
+    def __str__(self):
+        return self.nome_receita
 
     class Meta:
         db_table = 'alura_receitas'
