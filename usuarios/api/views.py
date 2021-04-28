@@ -40,11 +40,15 @@ def login(request):
             if user is not None:
                 auth.login(request, user)
                 print('login realizado com sucesso')
-        return render(request, 'usuarios/dashboard.html')
+                return redirect('dashboard')
     return render(request, 'usuarios/login.html')
 
 def dashboard(request):
-    return render(request, 'usuarios/dashboard.html')
+    if request.user.is_authenticated:
+        return render(request, 'usuarios/dashboard.html')
+    else:
+        return redirect('index')
 
 def logout(request):
-    pass
+    auth.logout(request)
+    return redirect('index')
