@@ -1,10 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 def cadastro(request):
-    pass
+    if request.method == 'POST':
+        nome = request.POST['nome']
+        email = request.POST['email']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+        print(nome, email, password, password2)
+        return redirect('login')
+    else:
+        return render(request, 'usuarios/cadastro.html')
 
 def login(request):
-    pass
+    return render(request, 'usuarios/login.html')
 
 def dashboard(request):
     pass
