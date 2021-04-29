@@ -9,21 +9,20 @@ def cadastro(request):
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']
-        if not nome.strip():
-            print('O campo nome não pode ficar em branco')
-        if not email.strip():
-            print('O campo email não pode ficar em branco')
-            return render(request, 'usuarios/cadastro.html')
-        if password != password2:
+        if campo_vazio(nome):
+            messages.error(request, 'O campo nome não pode ficar em branco')
+            return redirect('cadastro')
+        if campo_vazio(email):
+            messages.error(request, 'O campo email não pode ficar em branco')
+            return redirect('cadastro')
+        if senhas_não_sao_iguais(password, password2):
             messages.error(request, 'As senhas não são iguais!!')
-            print('As passwords não são iguais')
-            return render(request, 'usuarios/cadastro.html')
+            return redirect('cadastro')
         if User.objects.filter(email=email).exists():
-            print('Usiário já cadastrado')
-            return render(request, 'usuarios/cadastro.html')
+            messages.error(request, 'Usiário já cadastrado')
+            return redirect('cadastro')
         user = User.objects.create_user(username=nome, email=email, password=password)
         user.save()
-        print('Usuário cadastrado com sucesso')
         messages.success(request, 'Cadastro realizado com sucesso!')
         return redirect('login')
     else:
@@ -33,16 +32,15 @@ def login(request):
     if request.method == 'POST':
         email = request.POST['email']
         senha = request.POST['senha']
-        if email == "" or senha == "":
-            print("Os campos não podem ficar embranco")
-            return render(request, 'usuarios/login.html')
-        print(email, senha)
+        if campo_vazio(email) or campo_vazio(senha):
+            messages.error(request,"Os campos email e senha não podem ficar embranco")
+            return redirect('login')
         if User.objects.filter(email=email).exists():
             nome = User.objects.filter(email=email).values_list('username', flat=True).get()
             user = auth.authenticate(request, username=nome, password=senha)
             if user is not None:
                 auth.login(request, user)
-                print('login realizado com sucesso')
+                messages.success(request, 'login realizado com sucesso')
                 return redirect('dashboard')
     return render(request, 'usuarios/login.html')
 
@@ -83,3 +81,9 @@ def cria_receita(request):
         return redirect('dashboard')
     else:
         return render(request, 'usuarios/cria_receita.html')
+
+def campo_vazio(campo):
+    return not campo.strip()
+
+def senhas_não_sao_iguais(senha, senha2):
+    return senha != senha2
