@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from receitas.models import Receita
-
+from django.contrib.auth.models import User
+from django.contrib import auth, messages
 
 def index(request):
     receitas = Receita.objects.order_by('-date_receita').filter(publicada=True)
@@ -8,8 +9,7 @@ def index(request):
     dados = {
         'receitas' : receitas
     }
-
-    return render(request, 'receitas/index.html', dados)
+    return render(request,'receitas/index.html', dados)
 
 def receita(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
@@ -18,21 +18,7 @@ def receita(request, receita_id):
         'receita' : receita
     }
 
-    return render(request, 'receitas/index.html', receita_a_exibir)
-
-def buscar(request):
-    lista_receitas = Receita.objects.order_by('-date_receita').filter(publicada=True)
-
-    if 'buscar' in request.GET:
-        nome_a_buscar = request.GET['buscar']
-        if buscar:
-            lista_receitas = lista_receitas.filter(nome_receita__icontains=nome_a_buscar)
-    
-    dados = {
-        'receitas': lista_receitas
-    }
-
-    return render(request, 'receitas/buscar.html', dados)
+    return render(request,'receitas/receita.html', receita_a_exibir)
 
 def cria_receita(request):
     if request.method == 'POST':
@@ -43,25 +29,21 @@ def cria_receita(request):
         rendimento = request.POST['rendimento']
         categoria = request.POST['categoria']
         foto_receita = request.FILES['foto_receita']
-        rendimento = request.POST['rendimento']
-
         user = get_object_or_404(User, pk=request.user.id)
-        receita = Receita.objects.create(pessoa=user, nome_receita=nome_receita, ingredientes=ingredientes, modo_preparo=modo_preparo, tempo_preparo=tempo_preparo, 
-        rendimento=rendimento, categoria=categoria, foto_receita=foto_receita)
-
+        receita = Receita.objects.create(pessoa=user,nome_receita=nome_receita, ingredientes=ingredientes, modo_preparo=modo_preparo,tempo_preparo=tempo_preparo, rendimento=rendimento,categoria=categoria, foto_receita=foto_receita)
         receita.save()
-
         return redirect('dashboard')
     else:
         return render(request, 'receitas/cria_receita.html')
-    
+
+def deleta_receita(request, receita_id):
+    receita = get_object_or_404(Receita, pk=receita_id )
+    receita.delete()
+    return redirect('dashboard')
+
 def edita_receita(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
-
-    receita_a_editar = {
-        'receita' : receita
-    }
-
+    receita_a_editar = { 'receita':receita }
     return render(request, 'receitas/edita_receita.html', receita_a_editar)
 
 def atualiza_receita(request):
@@ -78,8 +60,3 @@ def atualiza_receita(request):
             r.foto_receita = request.FILES['foto_receita']
         r.save()
         return redirect('dashboard')
-
-def deleta_receita(request, receita_id):
-    receita = get_object_or_404(Receita, pk=receita_id)
-    receita.delete()
-    return redirect('dashboard')
