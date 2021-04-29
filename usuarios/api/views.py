@@ -87,3 +87,8 @@ def campo_vazio(campo):
 
 def senhas_não_sao_iguais(senha, senha2):
     return senha != senha2
+
+def deleta_receita(request, receita_id):
+    receita = get_object_or_404(Receita, pk=receita_id)
+    receita.delete()
+    return redirect('dashboard')
